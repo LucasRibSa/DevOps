@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciamento de Usuários</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f2f2f2;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 10px #ccc;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #aaa;
+        }
+        button {
+            padding: 10px 20px;
+            background: #2b8af7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1a6cd8;
+        }
+        .user-item {
+            background: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0px 0px 5px #ccc;
+            display: flex;
+            justify-content: space-between;
+        }
+        .delete-btn {
+            background: red;
+        }
+    </style>
+
+</head>
+<body>
+
+    <h1>Gerenciamento de Usuários</h1>
+
+    <div class="card">
+        <h3>Cadastrar Usuário</h3>
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="email" id="email" placeholder="Email">
+        <button onclick="cadastrarUsuario()">Cadastrar</button>
+    </div>
+
+    <h2>Usuários cadastrados</h2>
+    <div id="lista-usuarios"></div>
+
+<script>
+    const API_URL = "http://localhost:5000";
+
+    async function listarUsuarios() {
+        const resposta = await fetch(`${API_URL}/usuarios`);
+        const usuarios = await resposta.json();
+
+        const lista = document.getElementById("lista-usuarios");
+        lista.innerHTML = "";
+
+        usuarios.forEach(user => {
+            const item = document.createElement("div");
+            item.className = "user-item";
+            item.innerHTML = `
+                <span><strong>${user.nome}</strong> — ${user.email}</span>
+                <button class="delete-btn" onclick="deletarUsuario(${user.id})">Excluir</button>
+            `;
+            lista.appendChild(item);
+        });
+    }
+
+    async function cadastrarUsuario() {
+        const nome = document.getElementById("nome").value;
+        const email = document.getElementById("email").value;
+
+        const resposta = await fetch(`${API_URL}/usuarios`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nome, email })
+        });
+
+        const data = await resposta.json();
+        alert(data.mensagem || data.erro);
+
+        listarUsuarios();
+    }
+
+    async function deletarUsuario(id) {
+        const resposta = await fetch(`${API_URL}/usuarios/${id}`, {
+            method: "DELETE"
+        });
+
+        const data = await resposta.json();
+        alert(data.mensagem || data.erro);
+
+        listarUsuarios();
+    }
+
+    listarUsuarios();
+</script>
+
+</body>
+</html>

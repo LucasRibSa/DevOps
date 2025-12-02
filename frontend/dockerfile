@@ -1,0 +1,14 @@
+# Imagem base do Nginx
+FROM nginx:latest
+
+# Remove a página padrão
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copia seu index.html para a pasta servida pelo Nginx
+COPY index.html /usr/share/nginx/html/
+
+# Expõe a porta 80 (padrão HTTP)
+EXPOSE 80
+
+# Inicia o Nginx
+CMD ["nginx", "-g", "daemon off;"]

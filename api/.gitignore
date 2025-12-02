@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Docker
+*.env
+*.log
+
+# VSCode
+.vscode/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Postgres local
+postgres_data/
