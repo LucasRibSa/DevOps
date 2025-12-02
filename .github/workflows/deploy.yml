@@ -1,0 +1,42 @@
+name: Deploy automático EC2
+
+on:
+  push:
+    branches:
+      - staging
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Pega o código do repositório
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 2️⃣ Configura SSH usando a deploy key
+      - name: Configurar SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      # 3️⃣ Acessa a EC2 e executa comandos
+      - name: Deploy na EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+            echo "Entrando na pasta do projeto..."
+            cd ~/DevOps
+
+            echo "Atualizando branch atual..."
+            git fetch --all
+            git reset --hard origin/${GITHUB_REF_NAME}
+
+            echo "Parando containers antigos..."
+            sudo docker-compose down
+
+            echo "Subindo containers atualizados..."
+            sudo docker-compose up -d --build
+
+            echo "Deploy concluído!"
+          EOF
