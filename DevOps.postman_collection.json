@@ -1,0 +1,86 @@
+{
+	"info": {
+		"_postman_id": "dfd4d05a-46ef-4c56-99b8-e081eaf813e1",
+		"name": "DevOps",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50517703",
+		"_collection_link": "https://quinhasdolol-5900228.postman.co/workspace/lucas-ribeiro's-Workspace~fc98c66d-08db-41ad-86f7-f50c8abf96cb/collection/50517703-dfd4d05a-46ef-4c56-99b8-e081eaf813e1?action=share&source=collection_link&creator=50517703"
+	},
+	"item": [
+		{
+			"name": "Get Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"description": "## GET /usuarios (Get Users)\n\nEste _endpoint_ é usado para **recuperar e listar todos os usuários** cadastrados no banco de dados.\n\n- **O que Recebe:**\n    \n    - Não requer parâmetros no corpo (_body_) nem na URL.\n        \n- **O que Retorna (Resposta de Sucesso):**\n    \n    - **Status 200 OK**.\n        \n    - Retorna um **array** de objetos JSON, onde cada objeto representa um usuário cadastrado (incluindo id, nome e email).\n        \n- **Respostas Comuns:**\n    \n    - Se a base de dados estiver vazia, retorna um _array_ vazio (\\[ \\]) com Status 200 OK.\n        \n    - **Status 500 Internal Server Error:** Indica falha interna no servidor, como um problema de conexão com o banco de dados."
+			},
+			"response": []
+		},
+		{
+			"name": "Create Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Este teste verifica se o código de status HTTP é 201 (Created)\r",
+							"pm.test(\"Status 201: Usuário criado com sucesso\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"// Este teste verifica se a resposta possui um corpo JSON válido.\r",
+							"pm.test(\"Response is valid JSON\", function () {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"// Este bloco salva a resposta JSON em uma variável para ser inspecionada.\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"// Este teste verifica se o objeto retornado contém a chave 'id', que é crucial.\r",
+							"pm.test(\"Corpo da resposta contém o ID do novo usuário\", function () {\r",
+							"    pm.expect(response).to.have.property('id');\r",
+							"});\r",
+							"\r",
+							"// Este teste verifica se a mensagem de confirmação está correta.\r",
+							"pm.test(\"Mensagem de cadastro confirmada\", function () {\r",
+							"    pm.expect(response.mensagem).to.eql(\"Usuário cadastrado\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n    {\r\n        \"email\": \"victor@gmail.com\",\r\n        \"nome\": \"victor\"\r\n    }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://18.188.149.6:5000/usuarios",
+					"protocol": "http",
+					"host": [
+						"18",
+						"188",
+						"149",
+						"6"
+					],
+					"port": "5000",
+					"path": [
+						"usuarios"
+					]
+				},
+				"description": "## POST /usuarios (Create Users)\n\nEste _endpoint_ é usado para **cadastrar um novo usuário** no sistema, persistindo os dados no banco de dados.\n\n- **O que Recebe (Body):**\n    \n    - Espera um corpo de requisição no formato **JSON**.\n        \n    - **Campos Necessários:** O objeto JSON deve incluir nome (string) e email (string, que deve ser único).\n        \n- **O que Retorna (Resposta de Sucesso):**\n    \n    - **Status 201 Created** (Usuário Criado).\n        \n    - Retorna um JSON contendo o id gerado para o novo usuário e a mensagem de confirmação (\"mensagem\": \"Usuário cadastrado\").\n        \n- **Respostas de Erro Comuns:**\n    \n    - **Status 400 Bad Request:** Retornado se o email fornecido já estiver cadastrado na base de dados (ex: {\"Erro\": \"E-mail já cadastrado\"})."
+			},
+			"response": []
+		}
+	]
+}
