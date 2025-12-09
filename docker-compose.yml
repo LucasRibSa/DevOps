@@ -1,9 +1,6 @@
 version: "3.9"
 
 services:
-  # ==========================================
-  # SEU PROJETO ORIGINAL
-  # ==========================================
   api:
     build: ./api
     container_name: api_container
@@ -37,10 +34,6 @@ services:
       - "8080:80"
     depends_on:
       - api
-
-  # ==========================================
-  # MONITORAMENTO (ZABBIX + GRAFANA)
-  # ==========================================
 
   zabbix-db:
     image: postgres:13-alpine
@@ -94,7 +87,6 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
 
-  # O ESPIÃO (Zabbix Agent) - AGORA NO LUGAR CERTO
   zabbix-agent:
     image: zabbix/zabbix-agent:latest
     container_name: zabbix-agent
